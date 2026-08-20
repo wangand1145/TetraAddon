@@ -1,0 +1,27 @@
+{
+  "key": "moss_coal",
+  "category": "metal",
+  "primary": 5,
+  "secondary": 3.5,
+  "tertiary": 4,
+  "durability": 300,
+  "integrityCost": 2,
+  "integrityGain": 6,
+  "magicCapacity": 95,
+  "toolLevel": "minecraft:iron",
+  "toolEfficiency": 6,
+  "tints": {
+    "glyph": "FF69B4",
+    "texture": "FF69B4"
+  },
+  "textures": [
+    "metal",
+    "default"
+  ],
+  "material": {
+    "items": [ "minecraft:coal" ]
+  },
+  "requiredTools": {
+    "hammer_dig": "minecraft:stone"
+  }
+}
