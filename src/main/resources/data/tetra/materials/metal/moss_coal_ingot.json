@@ -1,9 +1,9 @@
 {
   "key": "moss_coal_ingot",
   "category": "metal",
-  "primary": 5.0,
+  "primary": 5,
   "secondary": 3.5,
-  "tertiary": 4.0,
+  "tertiary": 4,
   "durability": 300,
   "integrityCost": 2,
   "integrityGain": 6,
@@ -19,12 +19,20 @@
     "default"
   ],
   "material": {
-    "item": "tetra_ultimate_material:moss_coal_ingot"
+    "items": [
+      "tetra_ultimate_material:moss_coal_ingot"
+    ]
   },
   "requiredTools": {
-    "hammer": 3
+    "hammer_dig": "minecraft:iron"
   },
   "improvements": {
     "fiery_self": 0
-  }
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "tetra_ultimate_material"
+    }
+  ]
 }
