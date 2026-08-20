@@ -1,10 +1,31 @@
 modLoader="javafml"
-loaderVersion="47"
+loaderVersion="[46,)"
 license="All Rights Reserved"
 
 [[mods]]
-modId="tetra-ultimate-material"
+modId="tetra_ultimate_material"
 version="1.0.0"
 displayName="Tetra Ultimate Material"
-authors="You"
-description='Adds the Moss Coal material to Tetra.'
+authors="wangand1145"
+description='''Adds the Moss Coal material to Tetra.'''
+
+[[dependencies.tetra_ultimate_material]]
+modId="forge"
+mandatory=true
+versionRange="[46,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.tetra_ultimate_material]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.tetra_ultimate_material]]
+modId="tetra"
+mandatory=true
+versionRange="[6.0,)"
+ordering="NONE"
+side="BOTH"
