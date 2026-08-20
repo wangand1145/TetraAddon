@@ -30,7 +30,8 @@ public class TetraUltimateMaterial {
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+        // ✅ 用 getTab() 比较，类型匹配
+        if (event.getTab() == CreativeModeTabs.INGREDIENTS) {
             event.accept(new ItemStack(MOSS_COAL_INGOT.get()));
         }
     }
