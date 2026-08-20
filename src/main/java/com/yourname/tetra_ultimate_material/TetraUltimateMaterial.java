@@ -22,4 +22,3 @@ public class TetraUltimateMaterial {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }
-
