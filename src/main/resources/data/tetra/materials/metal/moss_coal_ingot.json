@@ -1,15 +1,15 @@
 {
   "key": "moss_coal_ingot",
   "category": "metal",
-  "primary": 5,
-  "secondary": 3.5,
-  "tertiary": 4,
-  "durability": 300,
-  "integrityCost": 2,
-  "integrityGain": 6,
-  "magicCapacity": 95,
-  "toolLevel": "minecraft:iron",
-  "toolEfficiency": 6,
+  "primary": "5",
+  "secondary": "3.5",
+  "tertiary": "4",
+  "durability": "300",
+  "integrityCost": "2",
+  "integrityGain": "6",
+  "magicCapacity": "95",
+  "toolLevel": "3",
+  "toolEfficiency": "6",
   "tints": {
     "glyph": "FF69B4",
     "texture": "FF69B4"
@@ -22,6 +22,6 @@
     "item": "tetra_ultimate_material:moss_coal_ingot"
   },
   "requiredTools": {
-    "hammer_dig": "minecraft:stone"
+    "hammer": 3
   }
 }
