@@ -10,18 +10,8 @@
   "magicCapacity": "95",
   "toolLevel": "3",
   "toolEfficiency": "6",
-  "tints": {
-    "glyph": "FF69B4",
-    "texture": "FF69B4"
-  },
-  "textures": [
-    "metal",
-    "default"
-  ],
-  "material": {
-    "item": "tetra_ultimate_material:moss_coal_ingot"
-  },
-  "requiredTools": {
-    "hammer": 3
-  }
+  "tints": { "glyph": "FF69B4", "texture": "FF69B4" },
+  "textures": ["metal", "default"],
+  "material": { "item": "tetra_ultimate_material:moss_coal_ingot" },
+  "requiredTools": { "hammer": 3 }
 }
