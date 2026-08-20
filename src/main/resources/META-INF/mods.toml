@@ -7,7 +7,7 @@ modId="tetra_ultimate_material"
 version="1.0.0"
 displayName="Tetra Ultimate Material"
 authors="wangand1145"
-description='''Adds the Moss Coal material to Tetra.'''
+description='''Adds Moss Coal Ingot and Tetra material.'''
 
 [[dependencies.tetra_ultimate_material]]
 modId="forge"
