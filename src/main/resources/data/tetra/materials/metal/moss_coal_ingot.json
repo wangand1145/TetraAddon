@@ -1,4 +1,5 @@
 {
+  "replace": true,
   "key": "moss_coal_ingot",
   "category": "metal",
   "primary": 5,
@@ -8,31 +9,16 @@
   "integrityCost": 2,
   "integrityGain": 6,
   "magicCapacity": 95,
-  "toolLevel": 3,
+  "toolLevel": "minecraft:iron",
   "toolEfficiency": 6,
-  "tints": {
-    "glyph": "FF69B4",
-    "texture": "FF69B4"
-  },
-  "textures": [
-    "metal",
-    "default"
-  ],
-  "material": {
-    "items": [
-      "tetra_ultimate_material:moss_coal_ingot"
-    ]
-  },
-  "requiredTools": {
-    "hammer_dig": "minecraft:iron"
-  },
-  "improvements": {
-    "fiery_self": 0
-  },
-  "conditions": [
-    {
-      "type": "forge:mod_loaded",
-      "modid": "tetra_ultimate_material"
-    }
-  ]
+  "tints": { "glyph": "FF69B4", "texture": "FF69B4" },
+  "textures": ["metal", "default"],
+  "material": { "items": ["tetra_ultimate_material:moss_coal_ingot"] },
+  "requiredTools": { "hammer_dig": "minecraft:iron" },
+  "effects": {
+    "tetra_ultimate_material.coal_repair": 10,
+    "tetra_ultimate_material.torch_craft": 10
+  }
 }
+
+
