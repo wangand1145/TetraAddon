@@ -2,11 +2,9 @@ package com.wangand1145.tetra_ultimate_material;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -26,14 +24,75 @@ public class CustomEffects {
     /* ===== 挖煤矿石 2.5% 概率 +2 耐久 ===== */
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        Player player = event.getPlayer(); // ← BreakEvent 有 getPlayer()，没问题
+        Player player = event.getPlayer();
         ItemStack stack = player.getMainHandItem();
 
-        if (!(stack.getItem() instanceof ModularItem item)) return;
+        if (!(stack.getItem() instanceof ModularItem item)) {
+            return;
+        }
 
         int level = item.getEffectLevel(stack, COAL_REPAIR);
-        if (level <= 0) return;
+        if (level <= 0) {
+            return;
+        }
 
+        // 用 ResourceLocation + BlockTags 判定 forge:ores/coal 标签
+        ResourceLocation tagLoc = new ResourceLocation("forge", "ores/coal");
+        boolean isCoalOre = event.getState().is(net.minecraft.tags.BlockTags.create(tagLoc));
+        if (!isCoalOre) {
+            return;
+        }
+
+        if (player.level().random.nextFloat() < 0.025f * level / 10f) {
+            int damage = stack.getDamageValue();
+            if (damage >= 2) {
+                stack.setDamageValue(damage - 2);
+                player.sendSystemMessage(Component.literal("§a[苔煤] 工具恢复了 2 点耐久"));
+            } else if (damage > 0) {
+                stack.setDamageValue(0);
+                player.sendSystemMessage(Component.literal("§a[苔煤] 工具恢复了耐久"));
+            }
+        }
+    }
+
+    /* ===== 工具+木棍合成火把，消耗 5 耐久 ===== */
+    @SubscribeEvent
+    public static void onCraft(PlayerEvent.ItemCraftedEvent event) {
+        if (event.getCrafting().getItem() != Items.TORCH) {
+            return;
+        }
+
+        Player player = event.getEntity();
+        if (player == null) {
+            return;
+        }
+
+        ItemStack tool = ItemStack.EMPTY;
+        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+            ItemStack slot = player.getInventory().getItem(i);
+            if (slot.getItem() instanceof ModularItem mItem) {
+                int lvl = mItem.getEffectLevel(slot, TORCH_CRAFT);
+                if (lvl > 0) {
+                    tool = slot;
+                    break;
+                }
+            }
+        }
+
+        if (tool.isEmpty()) {
+            return;
+        }
+
+        int dmg = tool.getDamageValue();
+        if (dmg + 5 > tool.getMaxDamage()) {
+            event.setCanceled(true);
+            player.sendSystemMessage(Component.literal("§c[苔煤] 工具耐久不足，无法制作火把"));
+            return;
+        }
+        tool.setDamageValue(dmg + 5);
+        player.sendSystemMessage(Component.literal("§a[苔煤] 消耗 5 点耐久制作火把"));
+    }
+}
         // forge:ores/coal 标签（覆盖所有模组的煤矿石）
         ResourceLocation loc = ResourceLocation.fromNamespaceAndPath("forge", "ores/coal");
         TagKey<Block> tag = TagKey.create(Registries.BLOCK, loc);
