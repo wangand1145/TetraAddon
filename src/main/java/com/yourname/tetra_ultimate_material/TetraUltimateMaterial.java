@@ -1,5 +1,6 @@
 package com.yourname.tetra_ultimate_material;
-
+import com.yourname.tetra_ultimate_material.ModItems;   // ← 加这行
+import com.yourname.tetra_ultimate_material.ModBlocks; 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
