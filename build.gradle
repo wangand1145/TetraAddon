@@ -44,10 +44,3 @@ jar {
         ])
     }
 }
-            "Specification-Version": "1",
-            "Implementation-Title": "tetra_ultimate_material",
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor": "you"
-        ])
-    }
-}
