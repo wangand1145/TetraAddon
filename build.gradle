@@ -21,12 +21,15 @@ minecraft {
 repositories {
     mavenCentral()
     maven { url = 'https://maven.minecraftforge.net/' }
-    maven { url = 'https://www.cursemaven.com/' }
+    maven {
+        url = "https://cursemaven.com"
+        content { includeGroup "curse.maven" }
+    }
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.20.1-47.4.0'
-    implementation fg.deobf("curse.maven:tetra-4006067:6099999")
+    implementation fg.deobf("curse.maven:tetra-289712:7769412")
 }
 
 jar {
@@ -34,6 +37,13 @@ jar {
         attributes([
             "Specification-Title": "tetra_ultimate_material",
             "Specification-Vendor": "you",
+            "Specification-Version": "1",
+            "Implementation-Title": "tetra_ultimate_material",
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor": "you"
+        ])
+    }
+}
             "Specification-Version": "1",
             "Implementation-Title": "tetra_ultimate_material",
             "Implementation-Version": "${version}",
