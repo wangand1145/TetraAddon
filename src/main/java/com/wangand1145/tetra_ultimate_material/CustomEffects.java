@@ -25,7 +25,7 @@ public class CustomEffects {
 
     // 煤矿石标签（一次性创建，复用）
     private static final TagKey<Block> COAL_ORE_TAG =
-        TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "ores/coal"));
+        TagKey.create(Registries.BLOCK, ResourceLocation.parse("forge", "ores/coal"));
 
     /* ===== 挖煤矿石 2.5% 概率恢复 5 耐久 ===== */
     @SubscribeEvent
