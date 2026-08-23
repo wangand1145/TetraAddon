@@ -1,9 +1,12 @@
 package com.wangand1145.tetra_ultimate_material;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
@@ -20,7 +23,11 @@ public class CustomEffects {
     public static final ItemEffect TORCH_CRAFT =
         ItemEffect.get("tetra_ultimate_material.torch_craft");
 
-    /* ===== 挖煤矿石 2.5% 概率 +2 耐久 ===== */
+    // 煤矿石标签（一次性创建，复用）
+    private static final TagKey<Block> COAL_ORE_TAG =
+        TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "ores/coal"));
+
+    /* ===== 挖煤矿石 2.5% 概率恢复 5 耐久 ===== */
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
@@ -32,22 +39,22 @@ public class CustomEffects {
         int level = item.getEffectLevel(stack, COAL_REPAIR);
         if (level <= 0) return;
 
-        var block = event.getState().getBlock();
-        if (block != Blocks.COAL_ORE && block != Blocks.DEEPSLATE_COAL_ORE) return;
+        // 用 forge:ores/coal 标签判定（覆盖所有模组的煤矿石）
+        if (!event.getState().is(COAL_ORE_TAG)) return;
 
         if (player.level().random.nextFloat() < 0.025f * level / 10f) {
             int damage = stack.getDamageValue();
-            if (damage >= 2) {
-                stack.setDamageValue(damage - 2);
-                player.sendSystemMessage(Component.literal("§a[苔煤] 工具恢复了 2 点耐久"));
-            } else if (damage > 0) {
-                stack.setDamageValue(0);
-                player.sendSystemMessage(Component.literal("§a[苔煤] 工具恢复了耐久"));
+            if (damage > 0) {
+                int newDamage = Math.max(0, damage - 5);
+                stack.setDamageValue(newDamage);
+                if (newDamage < damage) {
+                    player.sendSystemMessage(Component.literal("§a[苔煤] 工具恢复了 5 点耐久"));
+                }
             }
         }
     }
 
-    /* ===== 合成火把消耗耐久（精确判断 TORCH_CRAFT 效果等级）===== */
+    /* ===== 合成火把消耗耐久 ===== */
     @SubscribeEvent
     public static void onCraft(PlayerEvent.ItemCraftedEvent event) {
         if (event.getCrafting().getItem() != Items.TORCH) return;
