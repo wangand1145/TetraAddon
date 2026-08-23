@@ -8,10 +8,10 @@ import net.minecraftforge.eventbus.api.IEventBus;
 public class TetraUltimateMaterial {
 
     public TetraUltimateMaterial() {
-        IEventBus bus =
-        FMLJavaModLoadingContext.get().getModEventBus();
-        ModItems.ITEMS.register(bus);          // 纯物品
-        ModBlocks.BLOCKS.register(bus);        // 方块
-        ModBlocks.BLOCK_ITEMS.register(bus);   // 方块对应的物品（关键！）
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        ModItems.ITEMS.register(bus);      // ← 物品 + BlockItem 都在这一个里
+        ModBlocks.BLOCKS.register(bus);    // ← 方块本体
+        // ⚠️ 删掉 ModBlocks.BLOCK_ITEMS.register(bus); 这行！
     }
 }
