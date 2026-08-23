@@ -23,11 +23,11 @@ public class CustomEffects {
     public static final ItemEffect TORCH_CRAFT =
         ItemEffect.get("tetra_ultimate_material.torch_craft");
 
-    // 煤矿石标签（一次性创建，复用）
+    // 用 new ResourceLocation("forge", "ores/coal")，1.20.1 下稳定可用
+    @SuppressWarnings("removal")
     private static final TagKey<Block> COAL_ORE_TAG =
-        TagKey.create(Registries.BLOCK, ResourceLocation.parse("forge", "ores/coal"));
+        TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "ores/coal"));
 
-    /* ===== 挖煤矿石 2.5% 概率恢复 5 耐久 ===== */
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
@@ -39,7 +39,6 @@ public class CustomEffects {
         int level = item.getEffectLevel(stack, COAL_REPAIR);
         if (level <= 0) return;
 
-        // 用 forge:ores/coal 标签判定（覆盖所有模组的煤矿石）
         if (!event.getState().is(COAL_ORE_TAG)) return;
 
         if (player.level().random.nextFloat() < 0.025f * level / 10f) {
@@ -54,7 +53,6 @@ public class CustomEffects {
         }
     }
 
-    /* ===== 合成火把消耗耐久 ===== */
     @SubscribeEvent
     public static void onCraft(PlayerEvent.ItemCraftedEvent event) {
         if (event.getCrafting().getItem() != Items.TORCH) return;
@@ -86,3 +84,4 @@ public class CustomEffects {
         player.sendSystemMessage(Component.literal("§a[苔煤] 消耗 5 点耐久制作火把"));
     }
 }
+
