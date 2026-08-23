@@ -1,87 +1,57 @@
 package com.wangand1145.tetra_ultimate_material;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.level.BlockEvent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.event.level.BlockEvent;
 import se.mickelus.tetra.items.modular.ModularItem;
-import se.mickelus.tetra.effect.ItemEffect;
+import se.mickelus.tetra.module.ItemEffect;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber(modid = "tetra_ultimate_material")
 public class CustomEffects {
 
-    public static final ItemEffect COAL_REPAIR =
-        ItemEffect.get("tetra_ultimate_material.coal_repair");
-    public static final ItemEffect TORCH_CRAFT =
-        ItemEffect.get("tetra_ultimate_material.torch_craft");
+    public static final ItemEffect COAL_REPAIR = ItemEffect.get("tetra_ultimate_material.coal_repair");
 
-    // 用 new ResourceLocation("forge", "ores/coal")，1.20.1 下稳定可用
-    @SuppressWarnings("removal")
-    private static final TagKey<Block> COAL_ORE_TAG =
-        TagKey.create(Registries.BLOCK, new ResourceLocation("forge", "ores/coal"));
+    private static final Map<UUID, Long> lastRepairMsg = new ConcurrentHashMap<>();
 
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         Player player = event.getPlayer();
-        if (player == null) return;
+        if (player == null || player.level().isClientSide()) return;
+
+        // 只处理煤矿石（含深层）
+        if (!event.getState().is(net.minecraft.tags.BlockTags.COAL_ORES)) return;
 
         ItemStack stack = player.getMainHandItem();
-        if (!(stack.getItem() instanceof ModularItem item)) return;
+        if (!(stack.getItem() instanceof ModularItem modItem)) return;
 
-        int level = item.getEffectLevel(stack, COAL_REPAIR);
+        int level = modItem.getEffectLevel(stack, COAL_REPAIR);
         if (level <= 0) return;
 
-        if (!event.getState().is(COAL_ORE_TAG)) return;
+        // 概率 = 0.25% * level（level=10 时为 2.5%）
+        float chance = 0.0025f * level;
+        if (player.getRandom().nextFloat() >= chance) return;
 
-        if (player.level().random.nextFloat() < 0.025f * level / 10f) {
-            int damage = stack.getDamageValue();
-            if (damage > 0) {
-                int newDamage = Math.max(0, damage - 5);
-                stack.setDamageValue(newDamage);
-                if (newDamage < damage) {
-                    player.sendSystemMessage(Component.literal("§a[苔煤] 工具恢复了 5 点耐久"));
-                }
-            }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onCraft(PlayerEvent.ItemCraftedEvent event) {
-        if (event.getCrafting().getItem() != Items.TORCH) return;
-
-        Player player = event.getEntity();
-        if (player == null) return;
-
-        ItemStack tool = ItemStack.EMPTY;
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack slot = player.getInventory().getItem(i);
-            if (slot.getItem() instanceof ModularItem mItem) {
-                int lvl = mItem.getEffectLevel(slot, TORCH_CRAFT);
-                if (lvl > 0) {
-                    tool = slot;
-                    break;
-                }
-            }
+        // 恢复耐久 = max(1, level / 5)（level=10 时恢复 2）
+        int heal = Math.max(1, level / 5);
+        if (stack.isDamageableItem()) {
+            stack.setDamageValue(Math.max(0, stack.getDamageValue() - heal));
         }
 
-        if (tool.isEmpty()) return;
-
-        int dmg = tool.getDamageValue();
-        if (dmg + 5 > tool.getMaxDamage()) {
-            event.setCanceled(true);
-            player.sendSystemMessage(Component.literal("§c[苔煤] 工具耐久不足，无法制作火把"));
-            return;
+        // 10 秒内只提示一次
+        long now = player.level().getGameTime() / 20;
+        long last = lastRepairMsg.getOrDefault(player.getUUID(), -10L);
+        if (now - last >= 10) {
+            lastRepairMsg.put(player.getUUID(), now);
+            player.displayClientMessage(
+                net.minecraft.network.chat.Component.literal(
+                    "§a[苔煤修复] §7工具恢复了 " + heal + " 点耐久"),
+                false); // false = 不在 action bar 显示，而是在聊天栏
         }
-        tool.setDamageValue(dmg + 5);
-        player.sendSystemMessage(Component.literal("§a[苔煤] 消耗 5 点耐久制作火把"));
     }
 }
-
