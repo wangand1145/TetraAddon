@@ -16,12 +16,9 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
         DeferredRegister.create(ForgeRegistries.BLOCKS, "tetra_ultimate_material");
 
-    public static final DeferredRegister<Item> BLOCK_ITEMS =
-        DeferredRegister.create(ForgeRegistries.ITEMS, "tetra_ultimate_material");
-
     // ===== 基泥块 =====
     public static final RegistryObject<Block> BASE_MUD_BLOCK =
-        registerBlock("base_mud_block",
+        register("base_mud_block",
             () -> new Block(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.STONE)
                 .strength(0.6F)
@@ -32,7 +29,7 @@ public class ModBlocks {
 
     // ===== 致密基泥块 =====
     public static final RegistryObject<Block> COMPACT_BASE_MUD_BLOCK =
-        registerBlock("compact_base_mud_block",
+        register("compact_base_mud_block",
             () -> new Block(BlockBehaviour.Properties.of()
                 .mapColor(MapColor.STONE)
                 .strength(3.0F, 6.0F)
@@ -41,11 +38,13 @@ public class ModBlocks {
             )
         );
 
-    private static RegistryObject<Block> registerBlock(String name, Supplier<Block> blockSupplier) {
-        RegistryObject<Block> block = BLOCKS.register(name, blockSupplier);
-        BLOCK_ITEMS.register(name,
+    // ===== 核心：方块 + BlockItem 在同一个方法里注册，时序安全 =====
+    private static RegistryObject<Block> register(String name, Supplier<Block> blockSup) {
+        RegistryObject<Block> block = BLOCKS.register(name, blockSup);
+        ModItems.ITEMS.register(name,
             () -> new BlockItem(block.get(), new Item.Properties())
         );
         return block;
     }
 }
+
