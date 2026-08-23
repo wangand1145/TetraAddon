@@ -5,7 +5,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,7 +16,6 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS =
         DeferredRegister.create(ForgeRegistries.BLOCKS, "tetra_ultimate_material");
 
-    // 用同一个 DeferredRegister 来注册方块对应的物品
     public static final DeferredRegister<Item> BLOCK_ITEMS =
         DeferredRegister.create(ForgeRegistries.ITEMS, "tetra_ultimate_material");
 
@@ -43,11 +41,10 @@ public class ModBlocks {
             )
         );
 
-    // ===== 统一注册方法：Block + BlockItem 一起注册 =====
     private static RegistryObject<Block> registerBlock(String name, Supplier<Block> blockSupplier) {
         RegistryObject<Block> block = BLOCKS.register(name, blockSupplier);
         BLOCK_ITEMS.register(name,
-            () -> new BlockItem(block.get(), new Item.Properties().tab(CreativeModeTabs.FUNCTIONAL_BLOCKS))
+            () -> new BlockItem(block.get(), new Item.Properties())
         );
         return block;
     }
