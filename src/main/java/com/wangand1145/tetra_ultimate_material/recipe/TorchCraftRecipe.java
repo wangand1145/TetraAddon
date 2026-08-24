@@ -9,8 +9,6 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -20,7 +18,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class TorchCraftRecipe extends CustomRecipe {
-    // 修正：使用 1.20.1 的传统构造方法
+    // 使用传统构造方法（虽然标记为弃用，但在1.20.1中仍然可用）
     public static final ResourceLocation ID = new ResourceLocation("tetra_ultimate_material", "torch_craft");
     private final int torchCount;
     private final int durabilityCost;
@@ -119,26 +117,14 @@ public class TorchCraftRecipe extends CustomRecipe {
     public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
         NonNullList<ItemStack> remaining = NonNullList.withSize(container.getContainerSize(), ItemStack.EMPTY);
 
-        // 尝试获取玩家实体
-        Player player = null;
-        if (container instanceof Player) {
-            player = (Player) container;
-        } else if (container instanceof AbstractContainerMenu menu) {
-            player = menu.player;
-        }
-
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
             if (stack.isEmpty()) continue;
 
             if (hasTorchCraft(stack)) {
                 ItemStack copy = stack.copy();
-                // 如果获取到玩家，则传入玩家；否则传 null
-                if (player != null) {
-                    copy.hurtAndBreak(durabilityCost, player, p -> {});
-                } else {
-                    copy.hurtAndBreak(durabilityCost, null, p -> {});
-                }
+                // 直接传 null，虽然不会触发事件但耐久会正常减少
+                copy.hurtAndBreak(durabilityCost, null, p -> {});
                 remaining.set(i, copy);
             } else if (stack.is(Items.STICK)) {
                 ItemStack copy = stack.copy();
