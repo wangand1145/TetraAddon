@@ -24,26 +24,24 @@ public class TorchCraftRecipe extends CustomRecipe {
         this.durabilityCost = durabilityCost;
     }
 
-    // 通过 NBT 检查物品是否具有 torch_craft 改进
+    // 根据截图 NBT 路径：TetraData.module.slot/binding.improvement
     private boolean hasTorchCraft(ItemStack stack) {
-        if (stack.isEmpty()) return false;
         var tag = stack.getTag();
         if (tag == null) return false;
 
-        // 尝试两种常见的 Tetra 改进存储路径
-        var improvements = tag.getCompound("Improvements");
-        if (!improvements.isEmpty()) {
-            for (String key : improvements.getAllKeys()) {
-                if (key.contains("torch_craft")) return true;
-            }
-        }
         var tetraData = tag.getCompound("TetraData");
-        if (!tetraData.isEmpty()) {
-            var module = tetraData.getCompound("module");
-            for (String slot : module.getAllKeys()) {
-                var imps = module.getCompound(slot).getCompound("improvements");
-                for (String key : imps.getAllKeys()) {
-                    if (key.contains("torch_craft")) return true;
+        if (tetraData.isEmpty()) return false;
+
+        var module = tetraData.getCompound("module");
+        if (module.isEmpty()) return false;
+
+        // 遍历所有槽位，只要某个槽位的 improvement 中包含 torch_craft 就算
+        for (String slot : module.getAllKeys()) {
+            var slotData = module.getCompound(slot);
+            var improvement = slotData.getCompound("improvement"); // 注意单数！
+            for (String key : improvement.getAllKeys()) {
+                if (key.contains("torch_craft")) {
+                    return true;
                 }
             }
         }
@@ -62,12 +60,12 @@ public class TorchCraftRecipe extends CustomRecipe {
                 if (!hasTool) {
                     hasTool = true;
                 } else {
-                    return false; // 多个工具
+                    return false; // 不允许放多个工具
                 }
             } else if (stack.is(Items.STICK)) {
                 stickCount += stack.getCount();
             } else {
-                return false; // 无关物品
+                return false;
             }
         }
         return hasTool && stickCount >= 1;
@@ -129,3 +127,4 @@ public class TorchCraftRecipe extends CustomRecipe {
         }
     }
 }
+
