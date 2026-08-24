@@ -8,10 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class TorchCraftRecipe extends CustomRecipe {
+    public static final ResourceLocation ID = ResourceLocation.parse("tetra_ultimate_material:torch_craft");
     private final int torchCount;
     private final int durabilityCost;
 
@@ -21,63 +24,13 @@ public class TorchCraftRecipe extends CustomRecipe {
         this.durabilityCost = durabilityCost;
     }
 
-    // 判断合成是否匹配：需要 1 个带 torch_craft 的工具 + 至少 1 根木棍
-    @Override
-    public boolean matches(CraftingContainer container, Level level) {
-        boolean hasTool = false;
-        int stickCount = 0;
-        for (int i = 0; i < container.getContainerSize(); i++) {
-            ItemStack stack = container.getItem(i);
-            if (stack.isEmpty()) continue;
-
-            if (stack.getItem() instanceof IModularItem) {
-                if (!hasTool && hasTorchCraft(stack)) {
-                    hasTool = true;
-                } else {
-                    return false; // 多个工具或工具没有 torch_craft
-                }
-            } else if (stack.is(Items.STICK)) {
-                stickCount += stack.getCount();
-            } else {
-                return false;
-            }
-        }
-        return hasTool && stickCount >= 1;
-    }
-
-    // 合成结果：火把
-    @Override
-    public ItemStack assemble(CraftingContainer container, RegistryAccess access) {
-        return new ItemStack(Items.TORCH, torchCount);
-    }
-
-    // 剩余物品：工具保留并扣耐久，木棍消耗 1 根
-    @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
-        NonNullList<ItemStack> remaining = NonNullList.withSize(container.getContainerSize(), ItemStack.EMPTY);
-        for (int i = 0; i < container.getContainerSize(); i++) {
-            ItemStack stack = container.getItem(i);
-            if (stack.isEmpty()) continue;
-
-            if (stack.getItem() instanceof IModularItem && hasTorchCraft(stack)) {
-                ItemStack copy = stack.copy();
-                copy.hurtAndBreak(durabilityCost, null, p -> {});
-                remaining.set(i, copy);
-            } else if (stack.is(Items.STICK)) {
-                // 木棍只消耗 1 根，多余的退回
-                ItemStack copy = stack.copy();
-                copy.shrink(1);
-                if (!copy.isEmpty()) remaining.set(i, copy);
-            }
-        }
-        return remaining;
-    }
-
-    // 检查工具 NBT 中是否有 torch_craft 改进
+    // 通过 NBT 检查物品是否具有 torch_craft 改进
     private boolean hasTorchCraft(ItemStack stack) {
+        if (stack.isEmpty()) return false;
         var tag = stack.getTag();
         if (tag == null) return false;
-        // 尝试两种常见的 NBT 路径
+
+        // 尝试两种常见的 Tetra 改进存储路径
         var improvements = tag.getCompound("Improvements");
         if (!improvements.isEmpty()) {
             for (String key : improvements.getAllKeys()) {
@@ -95,6 +48,54 @@ public class TorchCraftRecipe extends CustomRecipe {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean matches(CraftingContainer container, Level level) {
+        boolean hasTool = false;
+        int stickCount = 0;
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack stack = container.getItem(i);
+            if (stack.isEmpty()) continue;
+
+            if (hasTorchCraft(stack)) {
+                if (!hasTool) {
+                    hasTool = true;
+                } else {
+                    return false; // 多个工具
+                }
+            } else if (stack.is(Items.STICK)) {
+                stickCount += stack.getCount();
+            } else {
+                return false; // 无关物品
+            }
+        }
+        return hasTool && stickCount >= 1;
+    }
+
+    @Override
+    public ItemStack assemble(CraftingContainer container, RegistryAccess access) {
+        return new ItemStack(Items.TORCH, torchCount);
+    }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
+        NonNullList<ItemStack> remaining = NonNullList.withSize(container.getContainerSize(), ItemStack.EMPTY);
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack stack = container.getItem(i);
+            if (stack.isEmpty()) continue;
+
+            if (hasTorchCraft(stack)) {
+                ItemStack copy = stack.copy();
+                copy.hurtAndBreak(durabilityCost, null, p -> {});
+                remaining.set(i, copy);
+            } else if (stack.is(Items.STICK)) {
+                ItemStack copy = stack.copy();
+                copy.shrink(1);
+                if (!copy.isEmpty()) remaining.set(i, copy);
+            }
+        }
+        return remaining;
     }
 
     @Override
