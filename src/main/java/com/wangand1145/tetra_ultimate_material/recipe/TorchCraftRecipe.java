@@ -9,6 +9,8 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -18,7 +20,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class TorchCraftRecipe extends CustomRecipe {
-    public static final ResourceLocation ID = ResourceLocation.parse("tetra_ultimate_material:torch_craft");
+    // 修正：使用 1.20.1 的传统构造方法
+    public static final ResourceLocation ID = new ResourceLocation("tetra_ultimate_material", "torch_craft");
     private final int torchCount;
     private final int durabilityCost;
 
@@ -29,11 +32,38 @@ public class TorchCraftRecipe extends CustomRecipe {
     }
 
     /**
-     * 递归搜索 NBT 树中是否包含 "torch_craft" 字符串
+     * 检测物品是否具有 torch_craft 改进。
+     * 先尝试精确的 Tetra NBT 路径，再回退到递归搜索。
      */
     private boolean hasTorchCraft(ItemStack stack) {
         CompoundTag tag = stack.getTag();
         if (tag == null) return false;
+
+        // 精确路径：TetraData.module.<slot>.improvement
+        CompoundTag tetraData = tag.getCompound("TetraData");
+        if (!tetraData.isEmpty()) {
+            CompoundTag module = tetraData.getCompound("module");
+            if (!module.isEmpty()) {
+                for (String slot : module.getAllKeys()) {
+                    CompoundTag slotData = module.getCompound(slot);
+                    // 尝试单数和复数两种形式
+                    CompoundTag improvement = slotData.getCompound("improvement");
+                    if (!improvement.isEmpty()) {
+                        for (String key : improvement.getAllKeys()) {
+                            if (key.contains("torch_craft")) return true;
+                        }
+                    }
+                    CompoundTag improvements = slotData.getCompound("improvements");
+                    if (!improvements.isEmpty()) {
+                        for (String key : improvements.getAllKeys()) {
+                            if (key.contains("torch_craft")) return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 回退：递归搜索整个 NBT
         return searchNbtForTorchCraft(tag);
     }
 
@@ -42,9 +72,7 @@ public class TorchCraftRecipe extends CustomRecipe {
 
         if (tag instanceof CompoundTag compound) {
             for (String key : compound.getAllKeys()) {
-                // 检查 key 本身是否包含 torch_craft
                 if (key.contains("torch_craft")) return true;
-                // 递归检查 value
                 if (searchNbtForTorchCraft(compound.get(key))) return true;
             }
         } else if (tag instanceof ListTag list) {
@@ -70,12 +98,12 @@ public class TorchCraftRecipe extends CustomRecipe {
                 if (!hasTool) {
                     hasTool = true;
                 } else {
-                    return false; // 不允许放多个工具
+                    return false;
                 }
             } else if (stack.is(Items.STICK)) {
                 stickCount += stack.getCount();
             } else {
-                return false; // 无关物品
+                return false;
             }
         }
 
@@ -91,17 +119,28 @@ public class TorchCraftRecipe extends CustomRecipe {
     public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
         NonNullList<ItemStack> remaining = NonNullList.withSize(container.getContainerSize(), ItemStack.EMPTY);
 
+        // 尝试获取玩家实体
+        Player player = null;
+        if (container instanceof Player) {
+            player = (Player) container;
+        } else if (container instanceof AbstractContainerMenu menu) {
+            player = menu.player;
+        }
+
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack stack = container.getItem(i);
             if (stack.isEmpty()) continue;
 
             if (hasTorchCraft(stack)) {
-                // 工具保留，扣耐久
                 ItemStack copy = stack.copy();
-                copy.hurtAndBreak(durabilityCost, null, p -> {});
+                // 如果获取到玩家，则传入玩家；否则传 null
+                if (player != null) {
+                    copy.hurtAndBreak(durabilityCost, player, p -> {});
+                } else {
+                    copy.hurtAndBreak(durabilityCost, null, p -> {});
+                }
                 remaining.set(i, copy);
             } else if (stack.is(Items.STICK)) {
-                // 木棍消耗 1 根
                 ItemStack copy = stack.copy();
                 copy.shrink(1);
                 if (!copy.isEmpty()) {
@@ -145,3 +184,4 @@ public class TorchCraftRecipe extends CustomRecipe {
         }
     }
 }
+
