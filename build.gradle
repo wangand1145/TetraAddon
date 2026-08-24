@@ -1,12 +1,46 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = '1.0.0'
+group = 'com.wangand1145'
+archivesBaseName = 'tetra_ultimate_material'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+}
+
 repositories {
-    maven { url = 'https://maven.blamejared.com/' } // Tetra 和 Mutil 的仓库
     mavenCentral()
+    maven { url = 'https://maven.minecraftforge.net/' }
+    maven {
+        url = "https://cursemaven.com"
+        content { includeGroup "curse.maven" }
+    }
 }
 
 dependencies {
-    // Forge 的 MDK 已经自带的依赖（minecraft、forge、mappings 等）不要动
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.0'
+    implementation fg.deobf("curse.maven:tetra-289712:7769412")
+}
 
-    // 添加 Tetra 和 Mutil 的依赖
-    implementation fg.deobf("se.mickelus.mutil:mutil:1.20.1-6.3.0")
-    implementation fg.deobf("se.mickelus.tetra:tetra:1.20.1-6.17.0")
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "tetra_ultimate_material",
+            "Specification-Vendor": "you",
+            "Specification-Version": "1",
+            "Implementation-Title": "tetra_ultimate_material",
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor": "you"
+        ])
+    }
 }
