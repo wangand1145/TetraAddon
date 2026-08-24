@@ -121,3 +121,4 @@ public class TorchCraftRecipe extends CustomRecipe {
         }
     }
 }
+
