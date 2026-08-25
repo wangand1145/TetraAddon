@@ -25,7 +25,7 @@ public class PlayerTickMagicEffects {
     // 自定义伤害类型的资源键
     private static final ResourceKey<DamageType> MAGIC_BACKFIRE_KEY =
         ResourceKey.create(Registries.DAMAGE_TYPE,
-            new ResourceLocation("tetra_ultimate_material", "magic_backfire"));
+        ResourceLocation.of("tetra_ultimate_material", "magic_backfire", ':'));
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -121,18 +121,16 @@ public class PlayerTickMagicEffects {
                 player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20, 0));
                 break;
             case 5:
-                // 使用自定义伤害类型“魔咒反噬”，造成 Integer.MAX_VALUE 伤害
-                // 死亡消息由 damage_type 数据包和语言文件定义：“%1$s 被魔咒反噬了”
-                RegistryAccess registryAccess = player.getServer().registryAccess();
-                Holder.Reference<DamageType> holder = registryAccess
-                    .registryOrThrow(Registries.DAMAGE_TYPE)
-                    .getHolderOrThrow(MAGIC_BACKFIRE_KEY);
-                DamageSource magicBackfire = new DamageSource(holder);
-                player.hurt(magicBackfire, Integer.MAX_VALUE);
-                break;
-        }
+                if (!player.level().isClientSide()) {
+                    ServerLevel serverLevel = (ServerLevel) player.level();
+                    Holder.Reference<DamageType> holder = serverLevel
+                        .registryAccess()
+                        .registryOrThrow(Registries.DAMAGE_TYPE)
+                        .getHolderOrThrow(MAGIC_BACKFIRE_KEY);
+                    DamageSource magicBackfire = new DamageSource(holder);
+                   player.hurt(magicBackfire, Integer.MAX_VALUE);
+                }
     }
-
     private static void removeEffect(Player player, net.minecraft.world.effect.MobEffect effect) {
         if (player.hasEffect(effect)) player.removeEffect(effect);
     }
