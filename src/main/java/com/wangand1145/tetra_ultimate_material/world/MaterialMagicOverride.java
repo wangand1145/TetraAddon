@@ -13,7 +13,7 @@ public class MaterialMagicOverride {
     public static void applyOverrideToAll() {
         overrideActive = true;
         overriddenMaterials.clear();
-        Collection<MaterialData> all = ItemUpgradeRegistry.instance.getAllMaterials();
+        Collection<MaterialData> all = ItemUpgradeRegistry.instance.getMaterials();
         for (MaterialData m : all) {
             if (m != null && m.key != null) {
                 applyToOne(m);
@@ -24,7 +24,7 @@ public class MaterialMagicOverride {
 
     public static void ensureAllOverridden() {
         if (!overrideActive) return;
-        Collection<MaterialData> all = ItemUpgradeRegistry.instance.getAllMaterials();
+        Collection<MaterialData> all = ItemUpgradeRegistry.instance.getMaterials(); // ✅ 修正
         for (MaterialData m : all) {
             if (m != null && m.key != null && overriddenMaterials.add(m.key)) {
                 applyToOne(m);
@@ -41,8 +41,8 @@ public class MaterialMagicOverride {
     }
 
     private static int getOverrideValue(String key) {
-        // 可按材料 key 定制，默认返回原材料 magicCapacity（即"覆盖为自身"，等价于启用魔容机制）
-        // 这里返回 100 作为统一魔容上限示例
-        return 100;
+        // 按你的要求：魔容上限按武器魔法容量上限，不设默认值，没有就是零
+        // 这里返回 0 意味着"覆盖为 0"，即魔容上限由武器 NBT 中的 magicCapacity 决定
+        return 0;
     }
 }
