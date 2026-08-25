@@ -33,4 +33,7 @@ public class MagicEssenceWorldData extends SavedData {
         clientActivated = value;
         setDirty();
     }
+    public boolean isActivated() {
+    return this.activated;
+    }
 }
