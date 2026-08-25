@@ -130,9 +130,12 @@ public class PlayerTickMagicEffects {
                         .registryOrThrow(Registries.DAMAGE_TYPE)
                         .getHolderOrThrow(MAGIC_BACKFIRE_KEY);
                     DamageSource magicBackfire = new DamageSource(holder);
-                   player.hurt(magicBackfire, Integer.MAX_VALUE);
+                    player.hurt(magicBackfire, Integer.MAX_VALUE);
                 }
+                break;
+        }
     }
+    
     private static void removeEffect(Player player, net.minecraft.world.effect.MobEffect effect) {
         if (player.hasEffect(effect)) player.removeEffect(effect);
     }
