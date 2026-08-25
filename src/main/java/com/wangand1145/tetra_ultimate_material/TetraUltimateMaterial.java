@@ -14,5 +14,6 @@ public class TetraUltimateMaterial {
         ModItems.ITEMS.register(bus);      // 物品
         ModBlocks.BLOCKS.register(bus);    // 方块
         ModRecipes.register(bus);          // 配方序列化器 ← 新加的这一行
+        ModItemsMagic.register(bus);      
     }
 }
