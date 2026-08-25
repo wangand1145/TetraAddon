@@ -123,7 +123,7 @@ public class PlayerTickMagicEffects {
             case 5:
                 // 使用自定义伤害类型“魔咒反噬”，造成 Integer.MAX_VALUE 伤害
                 // 死亡消息由 damage_type 数据包和语言文件定义：“%1$s 被魔咒反噬了”
-                RegistryAccess registryAccess = player.serverLevel().registryAccess();
+                RegistryAccess registryAccess = player.getServer().registryAccess();
                 Holder.Reference<DamageType> holder = registryAccess
                     .registryOrThrow(Registries.DAMAGE_TYPE)
                     .getHolderOrThrow(MAGIC_BACKFIRE_KEY);
