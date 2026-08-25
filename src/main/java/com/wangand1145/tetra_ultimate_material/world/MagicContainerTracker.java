@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * 魔容变化检测器。
+ * 在玩家 tick 中缓存每件 Tetra 武器上次的魔容值，检测到减少时记录（不干预逻辑）。
+ * 魔容消耗完全由 Tetra 原版魔力容量机制处理，本类仅作观测/日志用途。
+ */
 @Mod.EventBusSubscriber(modid = "tetra_ultimate_material")
 public class MagicContainerTracker {
     private static final Map<UUID, Map<Integer, Integer>> lastMagicMap = new HashMap<>();
@@ -32,10 +37,9 @@ public class MagicContainerTracker {
             if (last != null && last > current) {
                 int consumed = last - current;
                 // 魔容减少了 consumed。效果判定由 PlayerTickMagicEffects 基于当前值处理。
+                // 如需日志：System.out.println("[魔容] " + stack.getDisplayName() + " 魔容 -" + consumed);
             }
             lastValues.put(identity, current);
         }
     }
 }
-
-
