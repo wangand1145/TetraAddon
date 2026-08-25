@@ -1,5 +1,6 @@
 package com.wangand1145.tetra_ultimate_material;
 
+import com.wangand1145.tetra_ultimate_material.registry.ModItemsMagic;
 import com.wangand1145.tetra_ultimate_material.registry.ModRecipes;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
