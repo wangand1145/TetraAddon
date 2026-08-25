@@ -1,5 +1,6 @@
 package com.wangand1145.tetra_ultimate_material.registry;
 
+import com.wangand1145.tetra_ultimate_material.registry.ModItemsMagic;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
