@@ -27,8 +27,8 @@ public class PlayerTickMagicEffects {
     // 自定义伤害类型的资源键
     private static final ResourceKey<DamageType> MAGIC_BACKFIRE_KEY =
         ResourceKey.create(Registries.DAMAGE_TYPE,
-        ResourceLocation.of("tetra_ultimate_material", "magic_backfire"));
-
+        new ResourceLocation("tetra_ultimate_material", "magic_backfire"));
+    
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
