@@ -10,8 +10,22 @@ import net.minecraftforge.fml.common.Mod;
 import com.wangand1145.tetra_ultimate_material.world.MagicContainerData;
 import com.wangand1145.tetra_ultimate_material.world.MaterialMagicOverride;
 
+// 新增导入：用于自定义伤害类型
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.core.Holder;
+
 @Mod.EventBusSubscriber(modid = "tetra_ultimate_material")
 public class PlayerTickMagicEffects {
+
+    // 自定义伤害类型的资源键
+    private static final ResourceKey<DamageType> MAGIC_BACKFIRE_KEY =
+        ResourceKey.create(Registries.DAMAGE_TYPE,
+            new ResourceLocation("tetra_ultimate_material", "magic_backfire"));
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -63,15 +77,15 @@ public class PlayerTickMagicEffects {
         removeEffect(player, MobEffects.POISON);
         removeEffect(player, MobEffects.MOVEMENT_SLOWDOWN);
         removeEffect(player, MobEffects.WEAKNESS);
-        removeEffect(player, MobEffects.DAMAGE_BOOST); // 力量（伤害加成）
+        removeEffect(player, MobEffects.DAMAGE_BOOST);
         removeEffect(player, MobEffects.DIG_SPEED);
         removeEffect(player, MobEffects.LEVITATION);
         removeEffect(player, MobEffects.CONFUSION);
         removeEffect(player, MobEffects.BLINDNESS);
         removeEffect(player, MobEffects.HUNGER);
         removeEffect(player, MobEffects.INVISIBILITY);
-        removeEffect(player, MobEffects.MOVEMENT_SPEED); // 急迫? 用 SPEED 近似
-        removeEffect(player, MobEffects.HEAL); // 漂浮? 无直接对应，用 LEVITATION 已处理
+        removeEffect(player, MobEffects.MOVEMENT_SPEED);
+        removeEffect(player, MobEffects.HEAL);
 
         if (level == 0) return;
 
@@ -107,7 +121,14 @@ public class PlayerTickMagicEffects {
                 player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 20, 0));
                 break;
             case 5:
-                player.kill();
+                // 使用自定义伤害类型“魔咒反噬”，造成 Integer.MAX_VALUE 伤害
+                // 死亡消息由 damage_type 数据包和语言文件定义：“%1$s 被魔咒反噬了”
+                RegistryAccess registryAccess = player.serverLevel().registryAccess();
+                Holder.Reference<DamageType> holder = registryAccess
+                    .registryOrThrow(Registries.DAMAGE_TYPE)
+                    .getHolderOrThrow(MAGIC_BACKFIRE_KEY);
+                DamageSource magicBackfire = new DamageSource(holder);
+                player.hurt(magicBackfire, Integer.MAX_VALUE);
                 break;
         }
     }
