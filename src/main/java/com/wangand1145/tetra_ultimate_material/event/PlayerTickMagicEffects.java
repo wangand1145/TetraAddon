@@ -9,6 +9,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import com.wangand1145.tetra_ultimate_material.world.MagicContainerData;
 import com.wangand1145.tetra_ultimate_material.world.MaterialMagicOverride;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.core.Holder;
+import net.minecraft.world.damagesource.DamageType;
 
 // 新增导入：用于自定义伤害类型
 import net.minecraft.core.RegistryAccess;
@@ -17,7 +20,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.core.Holder;
 
 @Mod.EventBusSubscriber(modid = "tetra_ultimate_material")
 public class PlayerTickMagicEffects {
