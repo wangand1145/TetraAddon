@@ -1,5 +1,7 @@
 package com.wangand1145.tetra_ultimate_material;
 
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.material.MapColor;  
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.registries.DeferredRegister;
