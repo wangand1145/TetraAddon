@@ -1,6 +1,6 @@
 package com.wangand1145.tetra_ultimate_material.registry;
 
-import com.wangand1145.tetra_ultimate_material.block.ModBlocks;
+import com.wangand1145.tetra_ultimate_material.ModBlocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
