@@ -35,25 +35,27 @@ public class ModItems {
         () -> new BlockItem(ModBlocks.COMPACT_BASE_MUD_BLOCK.get(), new Item.Properties()));
 
     // —— 新增 5 个物品 ——
+    // 基泥苔煤锭（物品）
     public static final RegistryObject<Item> BASE_MUD_MOSS_COAL_INGOT = ITEMS.register(
         "base_mud_moss_coal_ingot",
-        () -> new BaseMudMossCoalIngotItem(new Item.Properties().stacksTo(64)));
+        () -> new Item(new Item.Properties().stacksTo(64)));
 
+    // 四个原木的方块物品（方块本身在 ModBlocks 注册）
     public static final RegistryObject<Item> FLOURISHING_LOG = ITEMS.register(
         "flourishing_log",
-        () -> new FlourishingLogItem(new Item.Properties().stacksTo(64)));
+        () -> new BlockItem(ModBlocks.FLOURISHING_LOG.get(), new Item.Properties().stacksTo(64)));
 
     public static final RegistryObject<Item> SECRET_FOREST_LOG = ITEMS.register(
         "secret_forest_log",
-        () -> new SecretForestLogItem(new Item.Properties().stacksTo(64)));
+        () -> new BlockItem(ModBlocks.SECRET_FOREST_LOG.get(), new Item.Properties().stacksTo(64)));
 
     public static final RegistryObject<Item> FOREST_ESSENCE_LOG = ITEMS.register(
         "forest_essence_log",
-        () -> new ForestEssenceLogItem(new Item.Properties().stacksTo(64)));
+        () -> new BlockItem(ModBlocks.FOREST_ESSENCE_LOG.get(), new Item.Properties().stacksTo(64)));
 
     public static final RegistryObject<Item> ULTIMATE_LOG = ITEMS.register(
         "ultimate_log",
-        () -> new UltimateLogItem(new Item.Properties().stacksTo(64).rarity(Rarity.EPIC)));
+        () -> new BlockItem(ModBlocks.ULTIMATE_LOG.get(), new Item.Properties().stacksTo(64).rarity(Rarity.EPIC)));
 
     public static void register(net.minecraftforge.eventbus.api.IEventBus bus) {
         ITEMS.register(bus);
