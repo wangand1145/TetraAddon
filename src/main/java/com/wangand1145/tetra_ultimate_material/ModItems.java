@@ -1,5 +1,6 @@
 package com.wangand1145.tetra_ultimate_material;
 
+import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.fml.common.Mod;  // 按需
