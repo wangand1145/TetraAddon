@@ -33,4 +33,29 @@ public class ModItems {
     // 致密基泥块的物品形态
     public static final RegistryObject<Item> COMPACT_BASE_MUD_BLOCK_ITEM = ITEMS.register("compact_base_mud_block",
         () -> new BlockItem(ModBlocks.COMPACT_BASE_MUD_BLOCK.get(), new Item.Properties()));
+
+    // —— 新增 5 个物品 ——
+    public static final RegistryObject<Item> BASE_MUD_MOSS_COAL_INGOT = ITEMS.register(
+        "base_mud_moss_coal_ingot",
+        () -> new BaseMudMossCoalIngotItem(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> FLOURISHING_LOG = ITEMS.register(
+        "flourishing_log",
+        () -> new FlourishingLogItem(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> SECRET_FOREST_LOG = ITEMS.register(
+        "secret_forest_log",
+        () -> new SecretForestLogItem(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> FOREST_ESSENCE_LOG = ITEMS.register(
+        "forest_essence_log",
+        () -> new ForestEssenceLogItem(new Item.Properties().stacksTo(64)));
+
+    public static final RegistryObject<Item> ULTIMATE_LOG = ITEMS.register(
+        "ultimate_log",
+        () -> new UltimateLogItem(new Item.Properties().stacksTo(64).rarity(Rarity.EPIC)));
+
+    public static void register(net.minecraftforge.eventbus.api.IEventBus bus) {
+        ITEMS.register(bus);
+    }
 }
