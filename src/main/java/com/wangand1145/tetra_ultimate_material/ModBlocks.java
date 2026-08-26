@@ -18,5 +18,37 @@ public class ModBlocks {
     // 致密基泥块
     public static final RegistryObject<Block> COMPACT_BASE_MUD_BLOCK = BLOCKS.register("compact_base_mud_block",
         () -> new Block(BlockBehaviour.Properties.of()
-            .strength(3.0f, 12.0f)));  // 更硬
+            .strength(3.0f, 12.0f)));  // 更硬  DeferredRegister.create(ForgeRegistries.BLOCKS, TetraUltimateMaterial.MODID);
+
+    public static final RegistryObject<Block> FLOURISHING_LOG = BLOCKS.register(
+        "flourishing_log",
+        () -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .strength(2.0f)
+            .requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<Block> SECRET_FOREST_LOG = BLOCKS.register(
+        "secret_forest_log",
+        () -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .strength(2.0f)
+            .requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<Block> FOREST_ESSENCE_LOG = BLOCKS.register(
+        "forest_essence_log",
+        () -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.WOOD)
+            .strength(2.0f)
+            .requiresCorrectToolForDrops()));
+
+    public static final RegistryObject<Block> ULTIMATE_LOG = BLOCKS.register(
+        "ultimate_log",
+        () -> new Block(BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_PURPLE) // 究极原木用紫色
+            .strength(5.0f)
+            .requiresCorrectToolForDrops()));
+
+    public static void register(net.minecraftforge.eventbus.api.IEventBus bus) {
+        BLOCKS.register(bus);
+    }
 }
